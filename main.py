@@ -6,7 +6,7 @@ import pickle
 
 from ai_explainer import explain_with_ai  
 
-st.set_page_config(page_title="AI Financial Assistant", layout="wide")
+st.set_page_config(page_title="AI Customer Churn Analyst", layout="wide")
 
 st.title("💼 AI Customer Churn Analyst")
 
@@ -22,6 +22,9 @@ with tab1:
     if "customer_data" not in st.session_state:
         st.session_state.customer_data = None
 
+    if "shap_values" not in st.session_state:
+        st.session_state.shap_values = None
+
     st.subheader("Enter Customer Details")
 
     col1, col2 = st.columns(2)
@@ -30,11 +33,15 @@ with tab1:
         age = st.slider("Age", 18, 80)
         tenure = st.slider("Tenure", 0, 10)
         credit_score = st.number_input("Credit Score", value=500)
+        salary = st.number_input("Estimated Salary", value=50000)
+        cr_card = st.selectbox("Has Credit Card", ["No", "Yes"])
 
     with col2:
         balance = st.number_input("Balance", value=10000)
         products = st.selectbox("Products", [1, 2, 3, 4])
-        active = st.selectbox("Active Member", [0, 1])
+        active = st.selectbox("Active Member", ["No", "Yes"])
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        geo = st.selectbox("Geography", ["France", "Germany", "Spain"])
 
     if st.button("🔍 Predict Churn"):
 
@@ -44,23 +51,40 @@ with tab1:
             "Tenure": tenure,
             "Balance": balance,
             "NumOfProducts": products,
-            "HasCrCard": 1,
-            "IsActiveMember": active,
-            "EstimatedSalary": 50000,
-            "Geography_Germany": 1,
-            "Geography_Spain": 0,
-            "Gender_Male": 1
+            "HasCrCard": 1 if cr_card == "Yes" else 0,
+            "IsActiveMember": 1 if active == "Yes" else 0,
+            "EstimatedSalary": salary,
+            "Geography_Germany": 1 if geo == "Germany" else 0,
+            "Geography_Spain": 1 if geo == "Spain" else 0,
+            "Gender_Male": 1 if gender == "Male" else 0
         }
 
         st.session_state.customer_data = data
 
-        feature_order = list(data.keys())
-        df = pd.DataFrame([data])[feature_order]
+        df = pd.DataFrame([data])
 
         prediction = model.predict(df)[0]
         probability = model.predict_proba(df)[0][1]
 
-        explanation = explain_with_ai(data, prediction)
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer(df)
+
+        st.session_state.shap_values = shap_values  
+        import numpy as np
+
+        values = shap_values.values[0][:, 1]
+        features = df.columns
+
+        importance = sorted(zip(features, values), key=lambda x: abs(x[1]), reverse=True)
+
+        top_features = importance[:3]
+
+        shap_text = "\n".join([
+            f"{f}: impact={'positive' if v > 0 else 'negative'}, strength={abs(v):.3f}"
+            for f, v in top_features
+        ])
+
+        explanation = explain_with_ai(data, prediction, shap_text)
 
         st.session_state.prediction_done = True
         st.session_state.result = {
@@ -89,10 +113,7 @@ with tab1:
 
         st.subheader("🔍 SHAP Explanation")
 
-        df = pd.DataFrame([st.session_state.customer_data])
-
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer(df)
+        shap_values = st.session_state.shap_values
 
         shap.plots.waterfall(shap_values[0, :, 1], show=False)
 
@@ -110,9 +131,10 @@ with tab1:
             chat_response = explain_with_ai(
                 st.session_state.customer_data,
                 result["prediction"],
-                user_question
+                question=user_question
             )
             st.write("🤖", chat_response)
+
 
 with tab2:
 
@@ -139,7 +161,7 @@ with tab2:
 
     with col1:
         st.markdown("### 🔵 Churn Distribution")
-        fig, ax = plt.subplots(figsize=(4,3))
+        fig, ax = plt.subplots(figsize=(4, 3))
         df["Exited"].value_counts().plot(kind="bar", ax=ax)
         ax.set_xticklabels(["Stayed", "Churned"], rotation=0)
         st.pyplot(fig)
@@ -158,8 +180,8 @@ with tab2:
         st.markdown("### 💰 Balance vs Churn")
         fig3, ax3 = plt.subplots(figsize=(4, 3))
         ax3.boxplot(
-            [df[df["Exited"]==0]["Balance"],
-             df[df["Exited"]==1]["Balance"]],
+            [df[df["Exited"] == 0]["Balance"],
+             df[df["Exited"] == 1]["Balance"]],
             labels=["Stayed", "Churned"]
         )
         st.pyplot(fig3)
