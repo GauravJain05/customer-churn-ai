@@ -8,7 +8,7 @@ from ai_explainer import explain_with_ai
 
 st.set_page_config(page_title="AI Financial Assistant", layout="wide")
 
-st.title("💼 AI Financial Analyst Assistant")
+st.title("💼 AI Customer Churn Analyst")
 
 model = pickle.load(open("model.pkl", "rb"))
 
