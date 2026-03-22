@@ -123,24 +123,6 @@ with tab1:
         st.subheader("🧠 AI Explanation")
         st.info(result["explanation"])
 
-        st.subheader("🔍 SHAP Explanation")
-
-        # shap_values = st.session_state.shap_values
-
-        # import matplotlib.pyplot as plt
-
-        # plt.clf()  
-
-        # shap.plots.bar(shap_values[0, :, 1], show=False)
-
-        # fig = plt.gcf()
-        # fig.set_size_inches(8.8, 3)   
-
-        # plt.tight_layout()
-
-        # st.pyplot(fig)
-
-        # plt.close(fig)
         shap_container = st.container()
 
         with shap_container:
