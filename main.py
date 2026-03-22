@@ -3,8 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import shap
 import pickle
+import matplotlib
 
 from ai_explainer import explain_with_ai  
+
+matplotlib.rcParams['text.usetex'] = False
 
 st.set_page_config(page_title="AI Customer Churn Analyst", layout="wide")
 
@@ -24,6 +27,12 @@ with tab1:
 
     if "shap_values" not in st.session_state:
         st.session_state.shap_values = None
+
+    if "chat_response" not in st.session_state:
+        st.session_state.chat_response = ""
+
+    if "last_question" not in st.session_state:
+        st.session_state.last_question = ""
 
     st.subheader("Enter Customer Details")
 
@@ -61,6 +70,9 @@ with tab1:
 
         st.session_state.customer_data = data
 
+        st.session_state.chat_response = ""
+        st.session_state.last_question = ""
+
         df = pd.DataFrame([data])
 
         prediction = model.predict(df)[0]
@@ -70,13 +82,13 @@ with tab1:
         shap_values = explainer(df)
 
         st.session_state.shap_values = shap_values  
+
         import numpy as np
 
         values = shap_values.values[0][:, 1]
         features = df.columns
 
         importance = sorted(zip(features, values), key=lambda x: abs(x[1]), reverse=True)
-
         top_features = importance[:3]
 
         shap_text = "\n".join([
@@ -115,25 +127,46 @@ with tab1:
 
         shap_values = st.session_state.shap_values
 
-        shap.plots.waterfall(shap_values[0, :, 1], show=False)
+        import matplotlib.pyplot as plt
+
+        plt.clf()  
+
+        shap.plots.bar(shap_values[0, :, 1], show=False)
 
         fig = plt.gcf()
-        fig.set_size_inches(6, 3)
+        fig.set_size_inches(8.8, 3)   
+
+        plt.tight_layout()
+
         st.pyplot(fig)
+
         plt.close(fig)
 
         st.divider()
         st.subheader("💬 Ask AI about this customer")
 
-        user_question = st.text_input("Ask a question:")
+        user_question = st.text_input(
+            "Ask a question:",
+            placeholder="e.g., Why is this customer likely to churn?"
+        )
 
-        if user_question:
-            chat_response = explain_with_ai(
-                st.session_state.customer_data,
-                result["prediction"],
-                question=user_question
-            )
-            st.write("🤖", chat_response)
+        if st.button("Ask AI"):
+
+            if user_question:
+
+                st.session_state.last_question = user_question
+
+                response = explain_with_ai(
+                    st.session_state.customer_data,
+                    result["prediction"],
+                    question=user_question
+                )
+
+                st.session_state.chat_response = response
+
+        if st.session_state.last_question:
+            st.markdown(f"**🧑 {st.session_state.last_question}**")
+            st.markdown(f"**🤖 {st.session_state.chat_response}**")
 
 
 with tab2:
@@ -179,15 +212,32 @@ with tab2:
     with col1:
         st.markdown("### 💰 Balance vs Churn")
         fig3, ax3 = plt.subplots(figsize=(4, 3))
+
         ax3.boxplot(
             [df[df["Exited"] == 0]["Balance"],
-             df[df["Exited"] == 1]["Balance"]],
-            labels=["Stayed", "Churned"]
+            df[df["Exited"] == 1]["Balance"]],
+            labels=["Stayed", "Churned"],
+            widths=0.5   
         )
+
+        ax3.set_ylim(0, df["Balance"].max()) 
+        plt.tight_layout()                   
+
         st.pyplot(fig3)
+        plt.close(fig3)
+
 
     with col2:
         st.markdown("### 🛍 Products vs Churn")
         fig4, ax4 = plt.subplots(figsize=(4, 3))
-        df.groupby("NumOfProducts")["Exited"].mean().plot(kind="bar", ax=ax4)
+
+        df.groupby("NumOfProducts")["Exited"].mean().plot(
+            kind="bar",
+            ax=ax4,
+            width=0.5   
+        )
+
+        ax4.set_ylim(0, 1)                  
+        plt.tight_layout()                 
         st.pyplot(fig4)
+        plt.close(fig4)
