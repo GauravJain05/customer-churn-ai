@@ -125,22 +125,44 @@ with tab1:
 
         st.subheader("🔍 SHAP Explanation")
 
-        shap_values = st.session_state.shap_values
+        # shap_values = st.session_state.shap_values
 
-        import matplotlib.pyplot as plt
+        # import matplotlib.pyplot as plt
 
-        plt.clf()  
+        # plt.clf()  
 
-        shap.plots.bar(shap_values[0, :, 1], show=False)
+        # shap.plots.bar(shap_values[0, :, 1], show=False)
 
-        fig = plt.gcf()
-        fig.set_size_inches(8.8, 3)   
+        # fig = plt.gcf()
+        # fig.set_size_inches(8.8, 3)   
 
-        plt.tight_layout()
+        # plt.tight_layout()
 
-        st.pyplot(fig)
+        # st.pyplot(fig)
 
-        plt.close(fig)
+        # plt.close(fig)
+        shap_container = st.container()
+
+        with shap_container:
+            st.subheader("🔍 SHAP Explanation")
+
+            if st.session_state.shap_values is not None:
+                shap_values = st.session_state.shap_values
+
+                import matplotlib.pyplot as plt
+
+                plt.clf()  
+
+                shap.plots.bar(shap_values[0, :, 1], show=False)
+
+                fig = plt.gcf()
+                fig.set_size_inches(8.8, 3)   
+
+                plt.tight_layout()
+
+                st.pyplot(fig)
+
+                plt.close(fig)
 
         st.divider()
         st.subheader("💬 Ask AI about this customer")
