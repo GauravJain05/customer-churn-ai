@@ -44,7 +44,11 @@ An end-to-end AI-powered web application that predicts customer churn and provid
 
 ## 📁 Project Structure
 ├── main.py
+
 ├── ai_explainer.py
+
 ├── model.pkl
+
 ├── Churn_Modelling.csv
+
 ├── requirements.txt
