@@ -27,24 +27,6 @@ html, body, [class*="css"] {
     padding: 2rem 3rem 4rem !important;
     max-width: 1300px;
 }
-[data-testid="stAppViewContainer"] {
-    background-color: #f5f6fa !important;
-}
-[data-testid="stMain"] {
-    background-color: #f5f6fa !important;
-}
-[data-testid="stHeader"] {
-    background-color: #f5f6fa !important;
-}
-[data-testid="block-container"] {
-    background-color: #f5f6fa !important;
-}
-section[data-testid="stSidebar"] {
-    background-color: #f5f6fa !important;
-}
-p, span, div, h1, h2, h3, label {
-    color: #111827 !important;
-}
 .page-heading {
     font-size: 32px;
     font-weight: 800;
