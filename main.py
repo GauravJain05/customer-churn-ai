@@ -27,6 +27,18 @@ html, body, [class*="css"] {
     padding: 2rem 3rem 4rem !important;
     max-width: 1300px;
 }
+[data-testid="stAppViewContainer"] > div {
+    background-color: #f5f6fa !important;
+}
+.card {
+    background: #ffffff !important;
+}
+.heading-card {
+    background: #ffffff !important;
+}
+.main-title-card {
+    background: #ffffff !important;
+}
 .page-heading {
     font-size: 32px;
     font-weight: 800;
