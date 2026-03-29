@@ -41,15 +41,34 @@ html, body, [class*="css"] {
     color: #6b7280;
     font-weight: 400;
     margin-bottom: 28px;
+    display:inline-block;
+    text-align: center;
+    text-align: center;
 }
-.page-heading1{
-    font-size: 32px;
+.page-heading1 {
+    font-size: 22px;
     font-weight: 600;
     color: #111827;
     letter-spacing: -0.5px;
     margin-bottom: 6px;
-    line-height: 1.2;      
+    line-height: 1.2;
+    
 }
+.heading-card {
+    background: #f5f6fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 28px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    display: inline-block;
+    width: 100%;
+}
+
 .stTabs [data-baseweb="tab-list"] {
     background: #ffffff;
     border: 1px solid #e5e7eb;
@@ -62,7 +81,7 @@ html, body, [class*="css"] {
 .stTabs [data-baseweb="tab"] {
     font-family: 'Inter', sans-serif !important;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 20px;
     border-radius: 7px;
     padding: 9px 22px;
     color: #374151 !important;
@@ -89,10 +108,15 @@ html, body, [class*="css"] {
     letter-spacing: 0;
     text-transform: none;
     color: #111827;
+    margin-top: 0;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid #e5e7eb;
+    width: 100%;
+    text-align: left;
+    display: block;
 }
+
 .field-group-label {
     font-size: 13px;
     font-weight: 600;
@@ -142,8 +166,18 @@ label {
     color: #ffffff !important;
     width: 100% !important;
     box-shadow: 0 1px 3px rgba(37,99,235,0.25) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
 }
-.stButton > button:hover { background: #1d4ed8 !important; }
+.stButton > button:hover {
+    background: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.4) !important;
+}
+.stButton > button:active {
+    transform: translateY(0px) !important;
+    box-shadow: 0 1px 4px rgba(37,99,235,0.3) !important;
+}
 
 .risk-badge {
     display: inline-flex;
@@ -156,7 +190,7 @@ label {
     color: #111827;
 }
 .risk-badge.high   { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
-.risk-badge.medium { background:#fffbeb; color:#d97706; border:1px solid #fde68a; }
+.risk-badge.medium { background:#fffbeb; color:#d97706; border:2px solid #d97706; }
 .risk-badge.low    { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
 
 .ai-box {
@@ -169,6 +203,7 @@ label {
     line-height: 1.8;
     color: #111827;
     white-space: pre-wrap;
+    text-align: left;
 }
 
 .chat-q {
@@ -179,9 +214,10 @@ label {
     font-size: 15px;
     color: #1e40af;
     margin-bottom: 12px;
-    display: inline-block;
+    display: block;
     font-weight: 500;
     width: 100%;
+    text-align: left;
 }
 .chat-a {
     background: #eef0f5;
@@ -194,6 +230,7 @@ label {
     white-space: pre-wrap;
     width: 100%;
     display: block;
+    text-align: left;
 }
 
 .empty-state {
@@ -240,15 +277,26 @@ label {
     display: inline-block;
     flex-shrink: 0;
 }
+.main-title-card {
+    background: #f5f6fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: #111827;
+    width: 100%;
+}
 
 hr { border-color: #f3f4f6 !important; margin: 20px 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="page-heading">💼 AI Customer Churn Analyst</div>
-<div class="page-subheading">Enter customer details to predict churn risk and get an AI-powered explanation.</div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="main-title-card page-heading">💼 AI Customer Churn Analyst</div>', unsafe_allow_html=True)
+st.markdown('<center>Enter customer details to predict churn risk and get an AI-powered explanation.</center>', unsafe_allow_html=True)
 
 @st.cache_resource
 def load_model():
@@ -258,8 +306,8 @@ model = load_model()
 
 def gauge_chart(prob):
     fig, ax = plt.subplots(figsize=(5, 2.8), subplot_kw=dict(aspect='equal'))
-    fig.patch.set_facecolor('#ffffff')
-    ax.set_facecolor('#ffffff')
+    fig.patch.set_facecolor('#f5f6fa')
+    ax.set_facecolor('#f5f6fa')
 
     theta = np.linspace(np.pi, 0, 300)
     ax.plot(np.cos(theta), np.sin(theta), color='#e5e7eb', linewidth=18, solid_capstyle='round')
@@ -272,7 +320,7 @@ def gauge_chart(prob):
             ha='center', va='center', fontsize=32, fontweight='800',
             color=color, fontfamily='DejaVu Sans')
     ax.text(0, -0.50, "CHURN PROBABILITY",
-            ha='center', va='center', fontsize=8.5, color='#6b7280',
+            ha='center', va='center', fontsize=8.5, color='#374151',
             fontfamily='DejaVu Sans', fontweight='600')
 
     ax.set_xlim(-1.3, 1.3)
@@ -300,15 +348,17 @@ for key, val in {
     if key not in st.session_state:
         st.session_state[key] = val
 
+
 tab1, tab2 = st.tabs(["🎯  Prediction & AI", "📊  Dashboard"])
+
 
 with tab1:
 
     inp_col, gauge_col = st.columns([3, 2], gap="large")
 
     with inp_col:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="sec-label">Customer Details</div>', unsafe_allow_html=True)
+        st.markdown('<div class="heading-card">Customer Details</div>', unsafe_allow_html=True)
+        
 
         st.markdown('<div class="field-group-label">Customer Profile</div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
@@ -330,7 +380,9 @@ with tab1:
         with f4: geo     = st.selectbox("Geography",        ["France", "Germany", "Spain"])
 
         st.markdown("<br>", unsafe_allow_html=True)
-        predict_btn = st.button("Run Churn Analysis →")
+        _, btn_col, _ = st.columns([1, 1, 1])
+        with btn_col:
+            predict_btn = st.button("Run Churn Analysis →")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with gauge_col:
@@ -339,8 +391,8 @@ with tab1:
             prob   = result["probability"]
             tier_label, tier_cls = risk_tier(prob)
 
-            st.markdown('<div class="card" style="text-align:center">', unsafe_allow_html=True)
-            st.markdown('<div class="sec-label" style="text-align:left">Risk Assessment</div>', unsafe_allow_html=True)
+           
+            st.markdown('<div class="heading-card">Risk Assessment</div>', unsafe_allow_html=True)
             gauge_fig = gauge_chart(prob)
             st.pyplot(gauge_fig, use_container_width=True)
             plt.close(gauge_fig)
@@ -353,7 +405,7 @@ with tab1:
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="empty-state" style="height:100%">
+            <div class="empty-state">
                 <div style="font-size:36px">📊</div>
                 <div style="font-size:16px;font-weight:600;color:#374151">No prediction yet</div>
                 <div style="font-size:14px;color:#6b7280;max-width:220px;line-height:1.6">
@@ -390,12 +442,7 @@ with tab1:
 
         vals       = shap_values.values[0][:, 1]
         importance = sorted(zip(df_pred.columns, vals), key=lambda x: abs(x[1]), reverse=True)
-        # shap_text  = "\n".join([
-        #     f"{f}: impact={'positive' if v > 0 else 'negative'}, strength={abs(v):.3f}"
-        #     for f, v in importance[:3]
-        # ])
-        # FIXED — crystal clear wording
-        shap_text = "\n".join([
+        shap_text  = "\n".join([
             f"{f}: {'INCREASES churn risk' if v > 0 else 'DECREASES churn risk'} (magnitude={abs(v):.3f})"
             for f, v in importance[:3]
         ])
@@ -412,18 +459,17 @@ with tab1:
     if st.session_state.prediction_done:
         result = st.session_state.result
         prob   = result["probability"]
-        tier_label, tier_cls = risk_tier(prob)
 
         _, center, _ = st.columns([1, 4, 1])
         with center:
 
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="sec-label">AI Analyst Explanation</div>', unsafe_allow_html=True)
+            
+            st.markdown('<div class="heading-card">AI Analyst Explanation</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="ai-box">{result["explanation"]}</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="sec-label">Feature Impact · SHAP Values</div>', unsafe_allow_html=True)
+            st.markdown('<div class="heading-card">Feature Impact · SHAP Values</div>', unsafe_allow_html=True)
+            
 
             if st.session_state.shap_values is not None:
                 sv         = st.session_state.shap_values
@@ -435,21 +481,21 @@ with tab1:
                 bar_colors   = ['#dc2626' if v > 0 else '#2563eb' for v in vals_sorted]
 
                 fig_s, ax_s = plt.subplots(figsize=(8, 3.2))
-                fig_s.patch.set_facecolor('#ffffff')
-                ax_s.set_facecolor('#f9fafb')
+                fig_s.patch.set_facecolor('#f5f6fa')
+                ax_s.set_facecolor('#f0f1f5')
                 ax_s.barh(names_sorted, vals_sorted, color=bar_colors, height=0.52)
-                ax_s.axvline(0, color='#e5e7eb', linewidth=1)
+                ax_s.axvline(0, color='#d1d5db', linewidth=1)
                 ax_s.tick_params(colors='#111827', labelsize=11)
                 for spine in ax_s.spines.values():
                     spine.set_edgecolor('#e5e7eb')
                 ax_s.set_xlabel("SHAP value", color='#111827', fontsize=10)
-                ax_s.grid(axis='x', color='#f3f4f6', linewidth=0.7, linestyle='--')
+                ax_s.grid(axis='x', color='#e5e7eb', linewidth=0.7, linestyle='--')
                 ax_s.set_axisbelow(True)
 
                 red_p  = mpatches.Patch(color='#dc2626', label='Increases churn risk')
                 blue_p = mpatches.Patch(color='#2563eb', label='Decreases churn risk')
                 ax_s.legend(handles=[red_p, blue_p], fontsize=10,
-                            facecolor='#ffffff', edgecolor='#e5e7eb',
+                            facecolor='#f5f6fa', edgecolor='#e5e7eb',
                             labelcolor='#111827', loc='lower right')
                 plt.tight_layout(pad=0.6)
                 st.pyplot(fig_s, use_container_width=True)
@@ -457,9 +503,9 @@ with tab1:
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="sec-label">Ask a Follow-up Question</div>', unsafe_allow_html=True)
-
+           
+            st.markdown('<div class="heading-card">Ask a Follow-up Question</div>', unsafe_allow_html=True)
+            
             user_question = st.text_input(
                 "question",
                 placeholder="e.g. What is the biggest risk factor for this customer?",
@@ -482,9 +528,10 @@ with tab1:
             st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 with tab2:
 
-    st.markdown('<div class="page-heading1" style="font-size:22px">📊 Customer Churn Dashboard</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-heading1">📊 Customer Churn Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-subheading">Overview of churn trends across the customer base.</div>', unsafe_allow_html=True)
 
     @st.cache_data
@@ -519,14 +566,13 @@ with tab2:
     st.markdown("<br>", unsafe_allow_html=True)
 
     def style_chart(fig, ax):
-        fig.patch.set_facecolor('#ffffff')
-        ax.set_facecolor('#f9fafb')
+        fig.patch.set_facecolor('#f5f6fa')
+        ax.set_facecolor('#f0f1f5')
         ax.tick_params(colors='#111827', labelsize=10)
         for spine in ax.spines.values():
             spine.set_edgecolor('#e5e7eb')
-        ax.grid(axis='y', color='#f3f4f6', linewidth=0.8, linestyle='--')
+        ax.grid(axis='y', color='#e5e7eb', linewidth=0.8, linestyle='--')
         ax.set_axisbelow(True)
-        # axis labels black
         if ax.get_xlabel():
             ax.set_xlabel(ax.get_xlabel(), color='#111827', fontsize=11)
         if ax.get_ylabel():
@@ -535,8 +581,8 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="sec-label">Churn Distribution</div>', unsafe_allow_html=True)
+       
+        st.markdown('<div class="heading-card">Churn Distribution</div>', unsafe_allow_html=True)
         fig, ax = plt.subplots(figsize=(5, 3.5))
         counts = df["Exited"].value_counts()
         ax.bar(["Stayed", "Churned"], [counts[0], counts[1]],
@@ -551,8 +597,8 @@ with tab2:
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="sec-label">Age Distribution</div>', unsafe_allow_html=True)
+       
+        st.markdown('<div class="heading-card">Age Distribution</div>', unsafe_allow_html=True)
         fig2, ax2 = plt.subplots(figsize=(5, 3.5))
         ax2.hist(df["Age"], bins=25, color='#2563eb', alpha=0.85)
         ax2.set_xlabel("Age")
@@ -566,8 +612,8 @@ with tab2:
     col3, col4 = st.columns(2)
 
     with col3:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="sec-label">Balance vs Churn</div>', unsafe_allow_html=True)
+       
+        st.markdown('<div class="heading-card">Balance vs Churn</div>', unsafe_allow_html=True)
         fig3, ax3 = plt.subplots(figsize=(5, 3.5))
         ax3.boxplot(
             [df[df["Exited"]==0]["Balance"], df[df["Exited"]==1]["Balance"]],
@@ -589,8 +635,8 @@ with tab2:
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col4:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="sec-label">Products vs Churn Rate</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="heading-card">Products vs Churn Rate</div>', unsafe_allow_html=True)
         fig4, ax4 = plt.subplots(figsize=(5, 3.5))
         prod_data = df.groupby("NumOfProducts")["Exited"].mean()
         ax4.bar(prod_data.index.astype(str), prod_data.values,
